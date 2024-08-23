@@ -1,4 +1,3 @@
-
 Step 1: npm install -g expo-cli (install expo globally)
 Step 2: npm i
 Step 3: npm start
