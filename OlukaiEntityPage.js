@@ -12,11 +12,11 @@ import {
   ImageBackground,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import BottomNavBarDylan from "./components/BottomNavBarDylan";
+import BottomNavBarOlukai from "./components/BottomNavbarOlukai";
 import { LinearGradient } from "expo-linear-gradient";
 import Svg, { Line, Path } from "react-native-svg";
 
-const EntityPage = () => {
+const OlukaiEntityPage = () => {
   const [feedItems, setFeedItems] = useState([
     {
       title: "Anvi - Target",
@@ -73,10 +73,10 @@ const EntityPage = () => {
               </Svg>
               <View style={styles.profileContainer}>
                 <Image
-                  source={require("./assets/flower.jpeg")}
+                  source={require("./assets/kuai.png")}
                   style={styles.profileImage}
                 />
-                <Text style={styles.profileName}>Anvi</Text>
+                <Text style={styles.profileName}>Kuai trip</Text>
               </View>
               <Svg
                 width="36"
@@ -117,16 +117,16 @@ const EntityPage = () => {
             <View style={styles.cardContainer}>
               <View style={styles.textContainer}>
                 <Text style={styles.mainText}>
-                  Anvi's next vaccine date is coming up on
+                  Next slot available for whale watching for 31st Aug
                 </Text>
-                <Text style={styles.dateText}>22nd Aug, 2024</Text>
+                <Text style={styles.dateText}>9:00 AM</Text>
                 <Text style={styles.subText}>
-                  Location: Stanford Health center
+                  Operator: Kuai Express
                 </Text>
               </View>
               <TouchableOpacity style={styles.button}>
                 <Ionicons name="call" size={18} color="#fff" />
-                <Text style={styles.buttonText}>Call Hospital</Text>
+                <Text style={styles.buttonText}>Contact Tour</Text>
               </TouchableOpacity>
             </View>
             <LinearGradient
@@ -156,7 +156,7 @@ const EntityPage = () => {
           </View>
         </ScrollView>
 
-        <BottomNavBarDylan addFeedItem={addFeedItem} />
+        <BottomNavBarOlukai addFeedItem={addFeedItem} />
       </View>
     </SafeAreaView>
   );
@@ -397,6 +397,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
   },
   feedImage: {
+    marginLeft:10,
     width: 120.237,
     height: 122,
     flexShrink: 0,
@@ -441,4 +442,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EntityPage;
+export default OlukaiEntityPage;

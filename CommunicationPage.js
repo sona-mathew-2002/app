@@ -1,4 +1,5 @@
 
+
 import React from "react";
 import {
   View,
@@ -14,7 +15,7 @@ import { Ionicons } from "@expo/vector-icons";
 import BottomNavBar from "./components/BottomNavBar";
 import { LinearGradient } from "expo-linear-gradient";
 import Svg, { Line } from "react-native-svg";
-const FinancePage = () => {
+const CommunicationPage = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -73,7 +74,7 @@ const FinancePage = () => {
                   style={styles.headingIcon}
                 />
               </View>
-              <Text style={styles.headingText}>Communication</Text>
+              <Text style={styles.headingText}>Finance</Text>
             </View>
             <View style={styles.cardContainer}>
               <View style={styles.textContainer}>
@@ -506,4 +507,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FinancePage;
+export default CommunicationPage;

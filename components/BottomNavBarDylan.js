@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Modal, ScrollView, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import { Ionicons, MaterialIcons, FontAwesome } from 'react-native-vector-icons';
@@ -8,15 +7,17 @@ import { BlurView } from 'expo-blur';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
 
-
-const BottomNavBar = () => {
+const BottomNavBarDylan = ({ addFeedItem }) => {
   const [selected, setSelected] = useState('Home');
   const [modalVisible, setModalVisible] = useState(false);
-  const [conversation, setConversation] = useState([]);
+  const [conversation, setConversation] = useState([
+    { type: 'lifi', text: "Dylan played piano for 45 mins today.", image: require('../assets/dylan.png'), action: ['Record session', 'Attach to Piano class notes'] }
+  ]);
   const [inputText, setInputText] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const [isFirstMessageSent, setIsFirstMessageSent] = useState(false);
   const navigation = useNavigation(); 
+
   const requestPermissions = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
@@ -49,10 +50,43 @@ const BottomNavBar = () => {
       setInputText('');
       setSelectedImage(null);
 
-      setTimeout(() => {
-        setConversation([...conversation, newMessage, { type: 'lifi', text: 'Processing your request...' }]);
-      }, 1000);
+      handleResponse(newMessage.text);
     }
+  };
+
+  const handleResponse = (userText) => {
+    setConversation((prevConversation) => 
+      prevConversation.map((msg) => 
+        msg.type === 'lifi' ? { ...msg, action: [] } : msg
+      )
+    );
+
+    let newLifiMessage;
+    if (userText.toLowerCase().includes('next piano class')) {
+      newLifiMessage = { type: 'lifi', text: 'Next piano class:', detail: '6:00pm, 25th Aug,2024', location: 'Location: IND Music Academy', action: ['Record session', 'Attach to Piano class notes'] };
+    } else if (userText.toLowerCase().includes('record session for next play')) {
+      newLifiMessage = {
+        type: 'lifi',
+        text: 'Recording session for next piano play\nCamera: Living room camera',
+        action: ['Record session', 'Attach to Piano class notes'],
+      };
+
+      // Add a new feed item
+      const feedItem = {
+        title: "Dylan - Living room camera",
+        text: "Recording session is set up and enabled for the next piano play",
+        time: "Now",
+        image: require('../assets/dylan.png')  // Replace with your correct image path
+      };
+      addFeedItem(feedItem);
+
+    } else {
+      newLifiMessage = { type: 'lifi', text: 'Processing your request...', action: ['Record session', 'Attach to Piano class notes'] };
+    }
+
+    setTimeout(() => {
+      setConversation((prevConversation) => [...prevConversation, newLifiMessage]);
+    }, 1000);
   };
 
   const clearInput = () => {
@@ -70,7 +104,6 @@ const BottomNavBar = () => {
       });
 
       if (!result.canceled && result.assets.length > 0) {
-        console.log("Image Selected:", result.assets[0].uri);
         setSelectedImage(result.assets[0].uri);
       }
     } catch (error) {
@@ -189,51 +222,31 @@ const BottomNavBar = () => {
                 </Svg>
               </TouchableOpacity>
 
-              {/* Chat Area and Recent History */}
-              {!isFirstMessageSent && (
-                <>
-                  <View style={styles.chatGrid}>
-                    <View style={styles.chatItem}>
-                      <Image source={require('../assets/flower.jpeg')} style={styles.chatItemImage} />
-                      <Text style={styles.chatItemText}>When did we last meet Joe</Text>
-                    </View>
-                    <View style={styles.chatItem}>
-                      <Image source={require('../assets/flower.jpeg')} style={styles.chatItemImage} />
-                      <Text style={styles.chatItemText}>ETA to swimming class</Text>
-                    </View>
-                    <View style={styles.chatItem}>
-                      <Image source={require('../assets/flower.jpeg')} style={styles.chatItemImage} />
-                      <Text style={styles.chatItemText}>Plan a weekend trip</Text>
-                    </View>
-                    <View style={styles.chatItem}>
-                      <Image source={require('../assets/flower.jpeg')} style={styles.chatItemImage} />
-                      <Text style={styles.chatItemText}>Setup dentist appointment</Text>
-                    </View>
-                  </View>
-                  <Text style={styles.recentHistoryTitle}>Recent History</Text>
-                  <ScrollView horizontal style={styles.recentHistoryScrollView}>
-                    <Image source={require('../assets/flower.jpeg')} style={styles.recentHistoryImage} />
-                    <Image source={require('../assets/flower.jpeg')} style={styles.recentHistoryImage} />
-                    <Image source={require('../assets/flower.jpeg')} style={styles.recentHistoryImage} />
-                    <Image source={require('../assets/flower.jpeg')} style={styles.recentHistoryImage} />
-                    <Image source={require('../assets/flower.jpeg')} style={styles.recentHistoryImage} />
-                  </ScrollView>
-                </>
-              )}
               {/* Conversation Area */}
               <ScrollView contentContainerStyle={styles.conversation}>
                 {conversation.map((message, index) => (
-                  <View
-                    key={index}
-                    style={[
-                      styles.messageBubble,
-                      message.type === 'user' ? styles.userMessage : styles.lifiMessage,
-                    ]}
-                  >
-                    {message.image ? (
-                      <Image source={{ uri: message.image }} style={styles.messageImageSent} />
-                    ) : (
-                      <Text style={styles.messageText}>{message.text}</Text>
+                  <View key={index} style={styles.messageContainer}>
+                    <View
+                      style={[
+                        styles.messageBubble,
+                        message.type === 'user' ? styles.userMessage : styles.lifiMessage,
+                      ]}
+                    >
+                      <View style={styles.row}>
+                        {message.text && <Text style={styles.messageText}>{message.text}</Text>}
+                        {message.image && <Image source={message.image} style={styles.messageImage} />}
+                      </View>
+                      {message.detail && <Text style={styles.messageDetail}>{message.detail}</Text>}
+                      {message.location && <Text style={styles.messageLocation}>{message.location}</Text>}
+                    </View>
+                    {index === conversation.length - 1 && message.action && message.action.length > 0 && (
+                      <View style={styles.actionContainer}>
+                        {message.action.map((action, idx) => (
+                          <TouchableOpacity key={idx} style={styles.actionButton}>
+                            <Text style={styles.actionText}>{action}</Text>
+                          </TouchableOpacity>
+                        ))}
+                      </View>
                     )}
                   </View>
                 ))}
@@ -248,33 +261,32 @@ const BottomNavBar = () => {
                   style={[styles.gradientBorder, selectedImage ? styles.expandedInput : {}]} 
                 >
                   <View style={styles.inputContainer}>
-  {selectedImage ? (
-    <Image source={{ uri: selectedImage }} style={styles.selectedImage} />
-  ) : (
-    <TextInput
-      style={styles.input}
-      placeholder="'Ask Lifi' or 'Tell Lifi'"
-      placeholderTextColor="#888"
-      value={inputText}
-      onChangeText={setInputText}
-    />
-  )}
-  
-  {(inputText || selectedImage) && (
-    <TouchableOpacity style={styles.clearButton} onPress={clearInput}>
-      <Ionicons name="close-circle" size={24} color="#888" />
-    </TouchableOpacity>
-  )}
-  
-  {/* Only show the add button if there's no selected image */}
-  {!selectedImage && (
-    <TouchableOpacity style={styles.addButton} onPress={pickImage}>
-      <Svg xmlns="http://www.w3.org/2000/svg" width="31" height="31" viewBox="0 0 31 31" fill="none">
-        <Path d="M13.95 23.25H17.05V17.05H23.25V13.95H17.05V7.75H13.95V13.95H7.75V17.05H13.95V23.25ZM15.5 31C13.3558 31 11.3408 30.5996 9.455 29.7987C7.56917 28.9721 5.92875 27.8612 4.53375 26.4662C3.13875 25.0712 2.02792 23.4308 1.20125 21.545C0.400417 19.6592 0 17.6442 0 15.5C0 13.3558 0.400417 11.3408 1.20125 9.455C2.02792 7.56917 3.13875 5.92875 4.53375 4.53375C5.92875 3.13875 7.56917 2.04083 9.455 1.24C11.3408 0.413333 13.3558 0 15.5 0C17.6442 0 19.6592 0.413333 21.545 1.24C23.4308 2.04083 25.0713 3.13875 26.4662 4.53375C27.8613 5.92875 28.9592 7.56917 29.76 9.455C30.5867 11.3408 31 13.3558 31 15.5C31 17.6442 30.5867 19.6592 29.76 21.545C28.9592 23.4308 27.8613 25.0712 26.4662 26.4662C25.0713 27.8612 23.4308 28.9721 21.545 29.7987C19.6592 30.5996 17.6442 31 15.5 31ZM15.5 27.9C18.9617 27.9 21.8938 26.6987 24.2963 24.2962C26.6988 21.8937 27.9 18.9617 27.9 15.5C27.9 12.0383 26.6988 9.10625 24.2963 6.70375C21.8938 4.30125 18.9617 3.1 15.5 3.1C12.0383 3.1 9.10625 4.30125 6.70375 6.70375C4.30125 9.10625 3.1 12.0383 3.1 15.5C3.1 18.9617 4.30125 21.8937 6.70375 24.2962C9.10625 26.6987 12.0383 27.9 15.5 27.9Z" fill="#9085C1"/>
-      </Svg>
-    </TouchableOpacity>
-  )}
-</View>
+                    {selectedImage ? (
+                      <Image source={{ uri: selectedImage }} style={styles.selectedImage} />
+                    ) : (
+                      <TextInput
+                        style={styles.input}
+                        placeholder="'Ask Lifi' or 'Tell Lifi'"
+                        placeholderTextColor="#888"
+                        value={inputText}
+                        onChangeText={setInputText}
+                      />
+                    )}
+                    
+                    {(inputText || selectedImage) && (
+                      <TouchableOpacity style={styles.clearButton} onPress={clearInput}>
+                        <Ionicons name="close-circle" size={24} color="#888" />
+                      </TouchableOpacity>
+                    )}
+                    
+                    {!selectedImage && (
+                      <TouchableOpacity style={styles.addButton} onPress={pickImage}>
+                        <Svg xmlns="http://www.w3.org/2000/svg" width="31" height="31" viewBox="0 0 31 31" fill="none">
+                          <Path d="M13.95 23.25H17.05V17.05H23.25V13.95H17.05V7.75H13.95V13.95H7.75V17.05H13.95V23.25ZM15.5 31C13.3558 31 11.3408 30.5996 9.455 29.7987C7.56917 28.9721 5.92875 27.8612 4.53375 26.4662C3.13875 25.0712 2.02792 23.4308 1.20125 21.545C0.400417 19.6592 0 17.6442 0 15.5C0 13.3558 0.400417 11.3408 1.20125 9.455C2.02792 7.56917 3.13875 5.92875 4.53375 4.53375C5.92875 3.13875 7.56917 2.04083 9.455 1.24C11.3408 0.413333 13.3558 0 15.5 0C17.6442 0 19.6592 0.413333 21.545 1.24C23.4308 2.04083 25.0713 3.13875 26.4662 4.53375C27.8613 5.92875 28.9592 7.56917 29.76 9.455C30.5867 11.3408 31 13.3558 31 15.5C31 17.6442 30.5867 19.6592 29.76 21.545C28.9592 23.4308 27.8613 25.0712 26.4662 26.4662C25.0713 27.8612 23.4308 28.9721 21.545 29.7987C19.6592 30.5996 17.6442 31 15.5 31ZM15.5 27.9C18.9617 27.9 21.8938 26.6987 24.2963 24.2962C26.6988 21.8937 27.9 18.9617 27.9 15.5C27.9 12.0383 26.6988 9.10625 24.2963 6.70375C21.8938 4.30125 18.9617 3.1 15.5 3.1C12.0383 3.1 9.10625 4.30125 6.70375 6.70375C4.30125 9.10625 3.1 12.0383 3.1 15.5C3.1 18.9617 4.30125 21.8937 6.70375 24.2962C9.10625 26.6987 12.0383 27.9 15.5 27.9Z" fill="#9085C1"/>
+                        </Svg>
+                      </TouchableOpacity>
+                    )}
+                  </View>
                 </GradientBorder>
                 <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
                   <Svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 90 90" fill="none">
@@ -298,6 +310,7 @@ const BottomNavBar = () => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
@@ -341,103 +354,104 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     padding: 16,
     marginHorizontal: 5,
-    maxHeight: '100%',
+    maxHeight: '70%',
   },
   closeButton: {
     alignSelf: 'center',
     marginBottom: 10,
   },
-  chatGrid: {
-    marginTop:0,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom:42
-  },
-  chatItem: {
-    width: 172,
-    height: 74,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 30,
-    padding: 10,
-    marginBottom: 18,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal:10,
-    // marginRight:16
-  },
-  chatItemImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 10,
-  },
-  chatItemText: {
-    fontSize: 14,
-    color: '#333',
-    flexShrink: 1,
-    fontFamily: 'Radio Canada',
-  },
   conversation: {
     marginBottom: 20,
+  },
+  messageContainer: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   messageBubble: {
     padding: 10,
     borderRadius: 15,
     marginBottom: 10,
-    maxWidth: '80%',
+    width: '90%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
   },
   userMessage: {
     alignSelf: 'flex-end',
-    backgroundColor: '#D4E6FF',
   },
   lifiMessage: {
     alignSelf: 'flex-start',
-    backgroundColor: '#F0F0F0',
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   messageText: {
-    fontSize: 16,
-    color: '#333',
-  },
-  messageImageSent: {
-    width: 200,
-    height: 150,
-    borderRadius: 15,
-  },
-  recentHistoryTitle: {
+    marginLeft:10,
     fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 14,
+    color: '#3d3d3d',
+    flexShrink: 1,
   },
-  recentHistoryScrollView: {},
-  recentHistoryImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginLeft: 26,
-    marginBottom:42
+  messageDetail: {
+    marginLeft:10,
+    fontSize: 22,
+    fontFamily:'Radio Canada Big',
+    color: '#5FD748',
+    marginTop: 5,
+    fontWeight: '600',
+    color: 'green',
+  },
+  messageLocation: {
+    marginLeft:10,
+    fontSize: 14,
+    color: '#888',
+    marginTop: 2,
+  },
+  messageImage: {
+    marginLeft:10,
+    width: 70,
+    height: 70,
+    borderRadius: 10,
+    marginRight: 10,
+  },
+  actionContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    flexWrap: 'wrap',
+    marginTop: 10,
+    marginLeft: 5,
+  },
+  actionButton: {
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    marginRight: 10,
+    marginTop: 5,
+  },
+  actionText: {
+    fontSize: 14,
+    color: '#9085C1',
   },
   inputOuterContainer: {
     flexDirection: 'row',
-    marginBottom:10,
+    marginBottom: 10,
     shadowColor: "#5D37FF",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
-    
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderRadius: 30,
-    
     paddingHorizontal: 15,
     flex: 1,
-    
-    
   },
   gradientBorder: {
     flex: 1,
@@ -472,4 +486,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BottomNavBar;
+export default BottomNavBarDylan;

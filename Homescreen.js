@@ -15,7 +15,9 @@ import { Ionicons } from "@expo/vector-icons";
 import BottomNavBar from "./components/BottomNavBar";
 import { LinearGradient } from "expo-linear-gradient";
 import Svg, { Line } from "react-native-svg";
+import { useNavigation } from '@react-navigation/native';
 const HomeScreen = () => {
+  const navigation = useNavigation(); 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -178,19 +180,34 @@ const HomeScreen = () => {
             </View>
 
             <View style={styles.feedContainer}>
+            <TouchableOpacity
+        
+        onPress={() => {
+          
+          navigation.navigate('dylanentity'); // Navigate to Homescreen
+        }}
+      >
               <View style={styles.feedItem}>
                 <View style={styles.feedTextContainer}>
-                  <Text style={styles.feedTitle}>Anvi - Target</Text>
+                  <Text style={styles.feedTitle}>Dylan. Living Room Camera</Text>
                   <Text style={styles.feedText}>
-                    Get Diapers for Anvi before August 12
+                    Dylan played Piano for 45 minutes today
                   </Text>
-                  <Text style={styles.feedTime}>12:30 PM</Text>
+                  <Text style={styles.feedTime}>Track Piano Practice</Text>
                 </View>
                 <Image
-                  source={require("./assets/flower.jpeg")}
+                  source={require("./assets/dylan.png")}
                   style={styles.feedImage}
                 />
               </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+        
+        onPress={() => {
+          
+          navigation.navigate('olukaientity'); // Navigate to Homescreen
+        }}
+      >
               <View style={styles.feedItem}>
                 <View style={styles.feedTextContainer}>
                   <Text style={styles.feedTitle}>Home - Security</Text>
@@ -202,6 +219,7 @@ const HomeScreen = () => {
                   style={styles.feedImage}
                 />
               </View>
+              </TouchableOpacity>
               <View style={styles.feedItem}>
                 <View style={styles.feedTextContainer}>
                   <Text style={styles.feedTitle}>Work - Meeting</Text>
@@ -237,6 +255,7 @@ const HomeScreen = () => {
         {/* <BottomNavBar /> */}
         {/* </GestureHandlerRootView> */}
       </View>
+      <BottomNavBar/>
     </SafeAreaView>
   );
 };
@@ -439,10 +458,11 @@ const styles = StyleSheet.create({
     fontWeight: "400",
   },
   feedText: {
+    paddingTop:5,
     color: "#4F4F4F",
-    fontFamily: "Radio Canada",
+    fontFamily: "Radio Canada Big",
     fontSize: 18,
-    fontWeight: "700",
+    fontWeight: "600",
   },
   feedTime: {
     fontSize: 14,

@@ -16,7 +16,7 @@ import BottomNavBarDylan from "./components/BottomNavBarDylan";
 import { LinearGradient } from "expo-linear-gradient";
 import Svg, { Line, Path } from "react-native-svg";
 
-const EntityPage = () => {
+const DylanEntityPage = () => {
   const [feedItems, setFeedItems] = useState([
     {
       title: "Anvi - Target",
@@ -397,6 +397,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
   },
   feedImage: {
+    marginLeft:10,
     width: 120.237,
     height: 122,
     flexShrink: 0,
@@ -441,4 +442,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EntityPage;
+export default DylanEntityPage;

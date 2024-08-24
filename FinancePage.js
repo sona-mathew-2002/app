@@ -1,4 +1,5 @@
 
+
 import React from "react";
 import {
   View,
@@ -494,7 +495,7 @@ const styles = StyleSheet.create({
     fontWeight: "400",
   },
   feedText: {
-    color: "#4F4F4F",
+    color: "#3d3d3d",
     fontFamily: "Radio Canada Big",
     fontSize: 18,
     fontWeight: "600",

@@ -12,6 +12,8 @@ import FinancePage from './FinancePage'
 import NewsPage from './NewsPage'
 import EntityPage from './Entity Page';
 import CommunicationPage from './CommunicationPage';
+import DylanEntityPage from './DylanEntityPage';
+import OlukaiEntityPage from './OlukaiEntityPage';
 
 const Stack = createNativeStackNavigator();
 // Prevent the splash screen from auto-hiding
@@ -56,9 +58,13 @@ export default function App() {
         <Stack.Screen name="News" component={NewsPage} />
         <Stack.Screen name="Communication" component={CommunicationPage} />
         <Stack.Screen name="Entity" component={EntityPage} />
+        <Stack.Screen name="dylanentity" component={DylanEntityPage} />
+        <Stack.Screen name="olukaientity" component={OlukaiEntityPage} />
+
+
       </Stack.Navigator>
       <StatusBar style="auto" />
-      <BottomNavBar/>
+      {/* <BottomNavBar/> */}
     </NavigationContainer>
       
       </>
