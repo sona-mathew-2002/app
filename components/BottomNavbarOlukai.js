@@ -67,7 +67,13 @@ const BottomNavBarOlukai = ({ addFeedItem }) => {
       setTimeout(() => {
         const lifiMessages = [
           { type: 'lifi', text: 'Olukai sandals added to Trip buy list', action: [] },
-          { type: 'lifi', text: 'Added to Need Attention', action: [] }
+          { 
+            type: 'lifi', 
+            text: 'Added to', 
+            image: require('../assets/flower.jpeg'), 
+            detail: 'Need Attention', 
+            action: [] 
+          }
         ];
         setConversation((prevConversation) => [...prevConversation, ...lifiMessages]);
       }, 1000);
@@ -224,10 +230,14 @@ const BottomNavBarOlukai = ({ addFeedItem }) => {
                     >
                       <View style={styles.row}>
                         {message.text && <Text style={styles.messageText}>{message.text}</Text>}
-                        {message.image && <Image source={typeof message.image === 'string' ? { uri: message.image } : message.image} style={styles.messageImage} />}
+                        {message.image && (
+                          <Image
+                            source={typeof message.image === 'string' ? { uri: message.image } : message.image}
+                            style={index === 0 && message.type === 'lifi' ? styles.rectImage : styles.circleImage} // Conditional styling
+                          />
+                        )}
+                        {message.detail && <Text style={styles.messageDetail}>{message.detail}</Text>}
                       </View>
-                      {message.detail && <Text style={styles.messageDetail}>{message.detail}</Text>}
-                      {message.location && <Text style={styles.messageLocation}>{message.location}</Text>}
                     </View>
                     {index === conversation.length - 1 && message.action && message.action.length > 0 && (
                       <View style={styles.actionContainer}>
@@ -354,7 +364,7 @@ const styles = StyleSheet.create({
   },
   messageContainer: {
     width: '100%',
-    alignItems: 'center',
+    alignItems: 'flex-start', // Align messages to the left
   },
   row: {
     flexDirection: 'row',
@@ -364,9 +374,9 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 15,
     marginBottom: 10,
-    width: '90%',
+    width: 'auto',
+    maxWidth: '75%', // Restrict the width to 75% of the container
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
     elevation: 3,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 3 },
@@ -375,36 +385,48 @@ const styles = StyleSheet.create({
   },
   userMessage: {
     alignSelf: 'flex-end',
+    backgroundColor: '#FFFFFF', // Different background for user messages
+    color:'#979797',
+    fontFamily:'Radio Canada Big'
   },
   lifiMessage: {
     alignSelf: 'flex-start',
+    fontFamily:'Radio Canada Big',
+    fontSize:16
   },
   messageText: {
-    marginLeft:10,
-    fontSize: 18,
+    fontSize: 16,
     color: '#3d3d3d',
     flexShrink: 1,
   },
   messageDetail: {
-    marginLeft:10,
-    fontSize: 22,
-    fontFamily:'Radio Canada Big',
-    color: '#5FD748',
-    marginTop: 5,
-    fontWeight: '600',
-    color: 'green',
+    fontSize: 16,
+    color: 'black', // Set "Need Attention" text to black
+    marginLeft: 10,
   },
   messageLocation: {
-    marginLeft:10,
     fontSize: 14,
     color: '#888',
     marginTop: 2,
   },
   messageImage: {
-    marginLeft:10,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    marginRight: 10,
+  },
+  rectImage: {
+    marginLeft: 10,
     width: 70,
-    height: 70,
+    height: 70, // Rectangular size for the first Lifi message
     borderRadius: 10,
+    marginRight: 10,
+  },
+  circleImage: {
+    marginLeft: 10,
+    width: 50,
+    height: 50,
+    borderRadius: 25, // Circular size for other images
     marginRight: 10,
   },
   actionContainer: {
@@ -415,7 +437,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   actionButton: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#EEEEEE',
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 20,
@@ -459,12 +481,6 @@ const styles = StyleSheet.create({
     width: 30, // Smaller size for the image in the input field
     height: 30,
     borderRadius: 15, // Make it a circle
-    marginRight: 10,
-  },
-  selectedImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 10,
     marginRight: 10,
   },
   clearButton: {
