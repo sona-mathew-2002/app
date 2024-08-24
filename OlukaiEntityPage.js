@@ -15,8 +15,12 @@ import { Ionicons } from "@expo/vector-icons";
 import BottomNavBarOlukai from "./components/BottomNavbarOlukai";
 import { LinearGradient } from "expo-linear-gradient";
 import Svg, { Line, Path } from "react-native-svg";
+import { useNavigation } from '@react-navigation/native';
+
 
 const OlukaiEntityPage = () => {
+  const navigation = useNavigation(); 
+
   const [feedItems, setFeedItems] = useState([
     {
       title: "Anvi - Target",
@@ -124,7 +128,10 @@ const OlukaiEntityPage = () => {
                   Operator: Kuai Express
                 </Text>
               </View>
-              <TouchableOpacity style={styles.button}>
+              <TouchableOpacity style={styles.button} onPress={() => {
+          
+          navigation.navigate('olukai'); // Navigate to Homescreen
+        }}>
                 <Ionicons name="call" size={18} color="#fff" />
                 <Text style={styles.buttonText}>Contact Tour</Text>
               </TouchableOpacity>

@@ -14,6 +14,7 @@ import EntityPage from './Entity Page';
 import CommunicationPage from './CommunicationPage';
 import DylanEntityPage from './DylanEntityPage';
 import OlukaiEntityPage from './OlukaiEntityPage';
+import OlukaiPage from './OlukaiPage';
 
 const Stack = createNativeStackNavigator();
 // Prevent the splash screen from auto-hiding
@@ -60,6 +61,8 @@ export default function App() {
         <Stack.Screen name="Entity" component={EntityPage} />
         <Stack.Screen name="dylanentity" component={DylanEntityPage} />
         <Stack.Screen name="olukaientity" component={OlukaiEntityPage} />
+        <Stack.Screen name="olukai" component={OlukaiPage} />
+
 
 
       </Stack.Navigator>
